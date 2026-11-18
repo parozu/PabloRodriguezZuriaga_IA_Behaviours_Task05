@@ -3,15 +3,19 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.AI;
 
-public class IncompletoBot : MonoBehaviour
+public enum State { Idle, Hide, Pursue, Evade, Wander, Complex }
+
+public class Bot : MonoBehaviour
 {
-    NavMeshAgent agent;
+    public NavMeshAgent agent;
     public GameObject target; //target sera el cop que lo pondremos en Unity
+    
+    public State currentState = State.Idle;
 
     // Start is called before the first frame update
     void Start()
     {
-        agent = this.GetComponent<NavMeshAgent>();
+        agent = GetComponent<NavMeshAgent>();
     }
 
     void Seek(Vector3 location)
@@ -25,13 +29,13 @@ public class IncompletoBot : MonoBehaviour
        //TODO
     }
 
-    void Pursue()
+    void Pursue() //P
     {
         //TODO
     }
 
     //Evade es practicamente igual a Pursue solo que se debe ir en la direccion contraria
-    void Evade()
+    void Evade() //E
     {
         //TODO
     }
@@ -41,12 +45,12 @@ public class IncompletoBot : MonoBehaviour
 	//tanto no puede ser local al metodo.
     Vector3 wanderTarget = Vector3.zero; //Se actualiza cada vez que el agente
 										 //tiene un nuevo valor en su posicion
-    void Wander()
+    void Wander() //R
     {
         //TODO
     }
 
-    void Hide()
+    void Hide() //H
     {
         //TODO
     }
@@ -54,6 +58,11 @@ public class IncompletoBot : MonoBehaviour
     void CleverHide()
     {
         //TODO
+    }
+
+    void Complex()
+    {
+        
     }
 
 
@@ -75,6 +84,32 @@ public class IncompletoBot : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        ReadInput();
 
+        switch (currentState)
+        {
+            case State.Hide:    Hide();    break;
+            case State.Pursue:  Pursue();  break;
+            case State.Evade:   Evade();   break;
+            case State.Wander:  Wander();  break;
+            case State.Complex: Complex(); break;
+            case State.Idle:    break;
+        }
+    }
+
+    void ReadInput()
+    {
+        if (Input.GetKeyDown(KeyCode.H)) ChangeState(State.Hide);
+        if (Input.GetKeyDown(KeyCode.P)) ChangeState(State.Pursue);
+        if (Input.GetKeyDown(KeyCode.E)) ChangeState(State.Evade);
+        if (Input.GetKeyDown(KeyCode.R)) ChangeState(State.Wander);
+        if (Input.GetKeyDown(KeyCode.C)) ChangeState(State.Complex);
+    }
+
+    void ChangeState(State newState)
+    {
+        if (currentState == newState) return;
+        Debug.Log($"{name}: {currentState} → {newState}");
+        currentState = newState;
     }
 }
